@@ -1,0 +1,12 @@
+@charset "UTF-8";
+#footer {width:100%;text-align:center;margin-top: 100px;clear:both;}
+	#footer .footerText{width:1000px;margin:0 auto;}
+		.footerText .mainFooter{width:100%;overflow:hidden;padding-top:50px;}
+			.mainFooter li{float:left;width:240px;}
+
+		.footerText .sitemap{width:100%;overflow:hidden;padding:40px 0 60px;}
+			.sitemap li{float:left;width:240px;}
+
+		.footerText .copy{width:100%;overflow:hidden;padding-bottom:30px;}
+			.footerText .copy li{padding-right:7px;}
+					li.vati {line-height:45px;font-size:14px;}

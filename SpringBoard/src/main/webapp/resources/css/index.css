@@ -1,0 +1,46 @@
+@charset "UTF-8";
+<style type="text/css">
+
+/* reset.css */
+
+
+/* wrapper */
+body{background-color:eee;}
+#wrapper{width:100%;margin:0 auto;}
+*{margin:0;padding:0;list-style:none;}
+a{color:#333;text-decoration:none;transition:0.3s all;}
+a:visited, a:focus{color:#333;}
+/* header.css */
+header{width:100%;text-align:center;border-bottom:3px solid; border-image: linear-gradient(to right, #f7f7f7, #ccc);border-image-slice: 1;}	
+	.brand{width: 100%; height: 100px; padding: 10px 0; background-color: #ffffff;}
+	.logo {height:20%;float:center;}
+		.logo img{width:240px;height:80px;}
+	.menu{line-height:100px;background-color:#f7f7f7;display:block;width:1000px;margin:0 auto;text-align:left;}		
+	nav{width:1000px;margin:0 auto;overflow:hidden;padding-bottom:10px;padding-bottom: 10px;}
+		nav ul{width:100%;overflow:hidden;}
+			nav ul li{float:left;height:40px;line-height:40px;text-align:center;}
+			nav ul li:last-child{float:right;margin-right: 20px;}
+				.navHover{display:block;margin:3px 8px;height:36px;border-bottom:2px solid rgba(192,192,192,0);font-size:17px;font-weight:600;transition:0.3s all;}
+				.navHover:hover{border-bottom:2px solid #784212;}
+		nav ul:after{content:""; display:none;clear:both;}
+		
+/* main.css */
+#container{width:1000px; margin:0 auto;padding-top:20px;font-size:15px;font-family:'맑은 고딕';padding-bottom:400px;}
+	.title{overflow:hidden;text-align:center;border-bottom:1px solid #ccc;height:35px;line-height:35px;}
+		.title li{float:left;}
+		.title li:first-child{width:10%;}
+		.title li:nth-child(2){width:45%;text-align:left;}
+		.title li:nth-child(3){width:15%;}
+		.title li:nth-child(4){width:10%;}
+		.title li:nth-child(5){width:6%;}
+		.title li:nth-child(5) img{height:18px;padding-top:8px;padding-right:1px;}
+		.title li:last-child{width:12%;}	
+	#subTitle{margin-bottom:5px;font-weight:600;background-color:#F7F7F7;border-top:2px solid #444;color:#444;}
+	#main {transition:0.3s all;cursor:pointer;}
+	#main:hover{background-color:#EBF5FB;}
+	#mainTitle{font-size:14px;font-family:'맑은 고딕';}
+	#modify{float: right; margin-right: 10px; margin-top: 10px;}
+#bbottom{width:990px;min-height:500px;padding:10px;margin-bottom:0px;text-align:left;}
+
+
+</style>

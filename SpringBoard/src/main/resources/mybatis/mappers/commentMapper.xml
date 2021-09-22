@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="comment">
+	<!-- 댓글 쓰기 -->
+	<insert id="commentWrite" parameterType="commentDTO">
+	 INSERT INTO scomment (sb_no, sm_no, sc_comment) VALUES (#{sb_no}, (SELECT sm_no FROM smember WHERE sm_id=#{sm_id}), #{sc_comment})
+	</insert>
+	<!-- 댓글 삭제 -->
+	<update id="commentDelete" parameterType="Integer">
+		UPDATE scomment SET sc_del=1 WHERE sb_no=#{sb_no} AND sc_no=#{sc_no}
+	</update>
+	<!-- 댓글 수정 -->
+	<update id="commentModify" parameterType="commentDTO">
+		UPDATE scomment SET sc_comment=#{sc_comment}, sc_modifydate=current_timestamp() WHERE sb_no=#{sb_no} AND sc_no=#{sc_no}
+	</update>
+	<!-- 댓글 추천 중복 확인 -->
+	
+	<!-- 댓글 추천 -->
+	
+</mapper>

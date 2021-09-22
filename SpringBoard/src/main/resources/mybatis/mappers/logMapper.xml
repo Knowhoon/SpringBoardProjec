@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="log">
+	<!-- 로그 기록 -->
+	<insert id="insertLog" parameterType="LogDTO">
+		INSERT INTO slog (sl_ip, sl_target,	<if test="sl_id != null">sl_id, </if>
+		sl_data) VALUES (#{sl_ip}, #{sl_target}, <if test="sl_id != null">#{sl_id}, </if>#{sl_data})
+	</insert>
+	<!-- 로그 리스트 -->
+	<select id="logList" parameterType="hashMap" resultType="LogDTO" >
+		SELECT (SELECT count(1) FROM slog 
+		<if test="search != null">
+			<choose>
+				<when test="searchOption != null and searchOption != 'td'">
+					WHERE ${searchOption} LIKE '%${search}%' 
+				</when>
+				<otherwise>
+					WHERE sl_target LIKE '%${search}%' OR sl_data LIKE '%${search}%' 
+				</otherwise>		
+			</choose>
+		</if>
+		) AS totalList, sl_no, sl_ip, sl_date, sl_target, sl_id, sl_data FROM slog 
+		<if test="search != null">
+			<choose>
+				<when test="searchOption != null and searchOption != 'td'">
+					WHERE ${searchOption} LIKE '%${search}%' 
+				</when>
+				<otherwise>
+					WHERE sl_target LIKE '%${search}%' OR sl_data LIKE '%${search}%' 
+				</otherwise>		
+			</choose>
+		</if>
+		ORDER BY sl_no DESC LIMIT #{startPage}, #{lastPage}
+	</select>
+	
+</mapper>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="board">
+	<!-- 게시글 리스트(카테고리별) -->	
+	<select id="boardList" parameterType="HashMap" resultType="boardDTO" >
+		SELECT (SELECT count(1) FROM sboardview${sb_cate}
+		<if test="search != null">
+			<choose>
+				<when test="searchOption != null and searchOption != 'TC'">
+					WHERE ${searchOption} LIKE '%${search}%' 
+				</when>
+				<otherwise>
+					WHERE sb_title LIKE '%${search}%' OR sb_content LIKE '%${search}%' 
+				</otherwise>		
+			</choose>
+		</if>
+		) AS totalList,	commentcount, sb_nno, sb_no, sca_category, sb_cate, sb_title, sb_date, sb_count, sb_like, sm_id, sm_name FROM sboardview#{sb_cate}
+		<if test="search != null">
+			<choose>
+				<when test="searchOption != null and searchOption != 'TC'">
+					WHERE ${searchOption} LIKE '%${search}%' 
+				</when>
+				<otherwise>
+					WHERE sb_title LIKE '%${search}%' OR sb_content LIKE '%${search}%' 
+				</otherwise>		
+			</choose>
+		</if>
+		 LIMIT #{startPage}, #{lastPage}
+	</select>		
+	<!-- 게시판 리스트 -->	
+	<select id="categoryList" resultType="boardDTO">
+		SELECT sca_no, sca_category, sca_no AS sb_cate FROM scategory WHERE sca_visible = 0		
+	</select>
+	<!-- 글 쓰기 -->	
+	<insert id="boardWrite" parameterType="boardDTO">
+		INSERT INTO sboard (sb_title, sb_content, sm_no, sb_cate <if test="sb_file !=null">,sb_file, sb_orifile</if>) VALUES (#{sb_title}, #{sb_content}, (SELECT sm_no FROM smember WHERE sm_id=#{sm_id}), #{sb_cate}<if test="sb_file !=null">, #{sb_file}, #{sb_orifile}</if>)
+	</insert>
+	<!-- 글 상세보기 -->												<!-- mybatisConfig -->
+	<select id="boardDetail" parameterType="boardDTO" resultType="com.knowhoon.web.board.BoardDTO">
+		SELECT (SELECT count(1) FROM sboardview#{sb_cate} WHERE sb_cate=#{sb_cate}) AS totalList, commentcount, sb_nno, sb_no, sb_cate, sb_title, sb_content, sb_date2, sb_modifydate, sb_count, sb_like, sb_dislike, sb_file, sb_orifile, sm_id, sm_name FROM sboardview#{sb_cate} WHERE sb_no=#{sb_no}
+	</select>
+	<!-- 글 삭제(글 노출 여부 설정) -->	
+	<update id="boardDelete" parameterType="Integer">
+		UPDATE sboard SET sb_del=1 WHERE sb_no=#{sb_no}
+	</update>
+	<!-- 글 수정 -->	
+	<update id="boardModify" parameterType="boardDTO">
+		UPDATE sboard SET sb_title=#{sb_title}, sb_content=#{sb_content}, sb_modifydate=current_timestamp() WHERE sb_no=#{sb_no}
+	</update>
+	<!-- 게시글 조회수 카운트 -->	
+	<update id="boardCount" parameterType="Integer">
+		UPDATE sboard SET sb_count=sb_count+1 WHERE sb_no=#{sb_no}
+	</update>
+	<!-- 좋아요/싫어요 중복 체크 -->
+	<select id="voteIdCheck" parameterType="voteDTO" resultType="String">
+		<![CDATA[
+		SELECT COUNT(1) FROM svote WHERE sb_no=#{sb_no} AND sm_no=(SELECT sm_no FROM smember WHERE sm_id=#{sm_id}) 
+		]]>
+	</select>	
+	<!-- 좋아요/싫어요 기능 -->
+	<insert id="detailVote" parameterType="voteDTO">
+		INSERT INTO svote (sb_no, sm_no, sb_vote) 
+		VALUES (#{sb_no}, (SELECT sm_no FROM smember WHERE sm_id=#{sm_id}),${sb_vote})
+	</insert>	
+	<!-- 댓글 리스트 -->
+	<select id="commentList" parameterType="Integer" resultType="CommentDTO" >
+		SELECT sc_no, sb_no, sc_comment, sc_like, sc_date, sc_modifydate, sm_id, sm_name FROM scommentview WHERE sb_no=#{sb_no}
+	</select>		
+	<!-- 베스트 게시글 -->
+	<select id="bestList" parameterType="Integer" resultType="hashMap" >
+		SELECT sb_no, sb_nno, sb_cate, sca_category, sb_title, sm_id, sm_name, DATEDIFF(NOW(), sb_date2) AS sb_ddate, sb_like, (sb_like-sb_dislike) AS sb_tlike FROM sboardview#{i} ORDER BY sb_tlike DESC LIMIT 0, 3
+	</select>	
+	<!-- 주간 베스트 게시글 -->	
+	<select id="weekList" resultType="boardDTO" >
+		SELECT sb_no, sb_cate, sca_category, sb_title, sm_id, sm_name, DATEDIFF(NOW(), sb_date2) AS sb_ddate, sb_like, (sb_like-sb_dislike) AS sb_tlike FROM sboardview WHERE sb_date2 between date_add(NOW(),interval -1 WEEK) AND NOW() ORDER BY sb_tlike DESC LIMIT 0, 3
+	</select>	
+	<!-- 이전글, 다음글 기능 -->
+	<select id="boardNextPrev" resultType="boardDTO" >
+		SELECT sb_no,sb_cate FROM sboardview#{sb_cate} WHERE sb_nno=#{sb_nno}
+	</select>	
+	
+</mapper>

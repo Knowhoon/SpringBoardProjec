@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="admin">	
+	<!-- 게시판 이름 -->	
+	<select id="getCategory" resultType="hashMap">
+		SELECT sca_no, sca_category, sca_visible FROM scategory
+		<if test="sca_no != null">
+			WHERE sca_no=#{sca_no}
+		</if>
+	</select>
+	<!-- 게시판 추가 -->	
+	<insert id="categoryInsert">
+		INSERT INTO scategory (sca_category) VALUES (#{categoryName})
+	</insert>
+	<!-- 게시판 이름 수정 -->	
+	<update id="categoryUpdate" parameterType="hashMap">
+		UPDATE scategory SET sca_category= #{sca_category} WHERE sca_no=#{sca_no}
+	</update>
+	<!-- 회원 리스트 -->	
+	<select id="memberList" resultType="AdminDTO" >
+		SELECT sm_no, sm_name, sm_id, sm_pw, sm_joindate, sm_birthdate, sm_email, sm_grade FROM smember	
+	</select>
+	<!-- 회원 등급 수정 -->	
+	<update id="gradeModify" parameterType="AdminDTO">
+		UPDATE smember SET sm_grade=#{sm_grade} WHERE sm_no=#{sm_no}
+	</update>
+	<!-- 회원 삭제(등급 하락) -->	
+	<update id="userDelete" parameterType="Integer">
+		UPDATE smember SET sm_grade=0 WHERE sm_no=#{sm_no}
+	</update>	
+	<!-- 카테고리 노출/비노출 기능 -->	
+	<update id="categoryVisible" parameterType="hashMap">
+		UPDATE scategory SET sca_visible=#{sca_visible} WHERE sca_no=#{sca_no}
+	</update>		
+
+</mapper>
