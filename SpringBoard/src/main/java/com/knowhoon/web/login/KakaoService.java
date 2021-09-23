@@ -40,7 +40,7 @@ public class KakaoService {
 //                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
 //                StringBuilder sb = new StringBuilder();
 //                sb.append("grant_type=authorization_code");
-//                sb.append("&client_id=5f932911fbf9bd32c027dd5421cedb62");  //본인이 발급받은 key
+//                sb.append("&client_id=key");  //본인이 발급받은 key
 //                sb.append("&redirect_uri=http://localhost:8080/web/kakaoLoginReturn");     // 본인이 설정해 놓은 경로
 //                sb.append("&code=" + authorize_code);
 //                bw.write(sb.toString());
@@ -131,7 +131,7 @@ public class KakaoService {
         final List<NameValuePair> postParams = new ArrayList<NameValuePair>();
  
         postParams.add(new BasicNameValuePair("grant_type", "authorization_code"));
-        postParams.add(new BasicNameValuePair("client_id", "5f932911fbf9bd32c027dd5421cedb62")); // REST API KEY
+        postParams.add(new BasicNameValuePair("client_id", "key")); // REST API KEY
         postParams.add(new BasicNameValuePair("redirect_uri", "http://localhost:8080/web/kakaoLoginReturn")); // 리다이렉트 URI
         postParams.add(new BasicNameValuePair("code", code)); // 로그인 과정중 얻은 code 값
  
