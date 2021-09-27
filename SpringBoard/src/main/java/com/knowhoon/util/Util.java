@@ -81,6 +81,7 @@ public class Util {
 		}
 		return ip;
 	}
+	//수정2
 	public String getAuthCode(int size) {
 	        Random random = new Random();
 	        StringBuffer buffer = new StringBuffer();
