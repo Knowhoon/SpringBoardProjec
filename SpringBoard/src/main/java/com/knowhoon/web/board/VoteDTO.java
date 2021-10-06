@@ -1,7 +1,7 @@
 package com.knowhoon.web.board;
 
 public class VoteDTO {
-	private int sv_no, sb_no, sm_no, sb_vote;
+	private int sv_no, sb_no, sc_no, sm_no, sb_vote;
 	private String sm_id, sm_date;
 	
 	public int getSv_no() {
@@ -39,5 +39,11 @@ public class VoteDTO {
 	}
 	public void setSm_no(int sm_no) {
 		this.sm_no = sm_no;
+	}
+	public int getSc_no() {
+		return sc_no;
+	}
+	public void setSc_no(int sc_no) {
+		this.sc_no = sc_no;
 	}	
 }

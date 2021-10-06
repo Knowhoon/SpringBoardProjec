@@ -87,4 +87,12 @@ public class BoardDAO {
 		return sqlSession.selectOne("board.boardNextPrev", boardDTO);
 	}
 
+	public String votecmtIdCheck(VoteDTO vote) {
+		return sqlSession.selectOne("board.votecmtIdCheck", vote);
+	}
+
+	public int commentVote(VoteDTO vote) {
+		return sqlSession.insert("board.commentVote",vote);
+	}
+
 }

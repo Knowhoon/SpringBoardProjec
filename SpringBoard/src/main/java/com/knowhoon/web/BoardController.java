@@ -260,7 +260,13 @@ public class BoardController {
 	@PostMapping("/voteIdCheck")
 	public @ResponseBody String checkID(VoteDTO vote, HttpServletRequest request) {
 		String check = "1";
-		check = boardService.voteIdCheck(vote);
+		if(vote.getSc_no()==0) {
+			check = boardService.voteIdCheck(vote);			
+		}else {
+			System.out.println("sc_no");
+			System.out.println(vote.getSc_no());
+			check = boardService.votecmtIdCheck(vote);
+		}
 		System.out.println(check);
 		return check;
 	}
@@ -268,6 +274,18 @@ public class BoardController {
 	@GetMapping("/detailVote")
 	public String detailVote(VoteDTO vote, HttpServletRequest request) {
 		int result = boardService.detailVote(vote);
+		if(result == 1) {
+			return "redirect:/detail?sb_no=" + vote.getSb_no() + "&sb_cate=" + request.getParameter("sb_cate");		
+			//boardService.detailVoteCount(vote);
+		}else {			
+			return "redirect:/error?detailVoteError";		
+		}
+	}
+	
+	//댓글 추천 기능
+	@GetMapping("/commentVote")
+	public String commentVote(VoteDTO vote, HttpServletRequest request) {
+		int result = boardService.commentVote(vote);
 		if(result == 1) {
 			return "redirect:/detail?sb_no=" + vote.getSb_no() + "&sb_cate=" + request.getParameter("sb_cate");		
 			//boardService.detailVoteCount(vote);

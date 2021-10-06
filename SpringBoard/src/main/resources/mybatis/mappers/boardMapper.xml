@@ -56,10 +56,17 @@
 	</update>
 	<!-- 좋아요/싫어요 중복 체크 -->
 	<select id="voteIdCheck" parameterType="voteDTO" resultType="String">
-		<![CDATA[
 		SELECT COUNT(1) FROM svote WHERE sb_no=#{sb_no} AND sm_no=(SELECT sm_no FROM smember WHERE sm_id=#{sm_id}) 
-		]]>
 	</select>	
+	<!-- 댓글 추천 중복 체크 -->
+	<select id="votecmtIdCheck" parameterType="voteDTO" resultType="String">
+		SELECT COUNT(1) FROM svotecmt WHERE sb_no=#{sb_no} AND sc_no=#{sc_no} AND sm_no=(SELECT sm_no FROM smember WHERE sm_id=#{sm_id}) 
+	</select>	
+	<!-- 댓글 추천 기능 -->
+	<insert id="commentVote" parameterType="voteDTO">
+		INSERT INTO svotecmt (sb_no, sc_no, sm_no) 
+		VALUES (#{sb_no}, #{sc_no}, (SELECT sm_no FROM smember WHERE sm_id=#{sm_id}))
+	</insert>	
 	<!-- 좋아요/싫어요 기능 -->
 	<insert id="detailVote" parameterType="voteDTO">
 		INSERT INTO svote (sb_no, sm_no, sb_vote) 

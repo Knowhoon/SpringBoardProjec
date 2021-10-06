@@ -71,4 +71,12 @@ public class BoardService {
 		return boardDAO.boardNextPrev(boardDTO);
 	}
 
+	public String votecmtIdCheck(VoteDTO vote) {
+		return boardDAO.votecmtIdCheck(vote);
+	}
+
+	public int commentVote(VoteDTO vote) {
+		return boardDAO.commentVote(vote);
+	}
+
 }
