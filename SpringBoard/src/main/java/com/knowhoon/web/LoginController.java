@@ -3,6 +3,7 @@ package com.knowhoon.web;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.knowhoon.util.Util;
 import com.knowhoon.web.log.LogDTO;
 import com.knowhoon.web.log.LogService;
@@ -70,47 +70,40 @@ public class LoginController {
 	}
 	//카카오 로그인
 	@RequestMapping("/kakaoLogin")
-	public String kakaoLogin() {
-		 StringBuffer loginUrl = new StringBuffer();
-	        loginUrl.append("https://kauth.kakao.com/oauth/authorize?client_id=");
-	        loginUrl.append("5f932911fbf9bd32c027dd5421cedb62"); 
+	public String kakaoLogin() throws Exception {
+		String serviceKey = "5f932911fbf9bd32c027dd5421cedb62";
+		String url = "https://kauth.kakao.com/oauth/authorize";
+		String redirect_url = "http://localhost:8080/web/kakaoLoginReturn";
+		StringBuffer loginUrl = new StringBuffer();
+	        loginUrl.append(url);
+	        loginUrl.append("?client_id=");
+	        loginUrl.append(serviceKey); 
 	        loginUrl.append("&redirect_uri=");
-	        loginUrl.append("http://localhost:8080/web/kakaoLoginReturn"); 
+	        loginUrl.append(redirect_url); 
 	        loginUrl.append("&response_type=code");
 	        
 	        return "redirect:"+loginUrl.toString();
 	}
 	//카카오 로그인 리턴
 	@RequestMapping("/kakaoLoginReturn")
-	public String kakao(@RequestParam String code, HttpSession session) {
-		System.out.println(code);
-		JsonNode accessToken;
-        JsonNode jsonToken = kakaoService.getKakaoAccessToken(code);
-        accessToken = jsonToken.get("access_token");
-        //System.out.println("access_token : " + accessToken);
-        JsonNode userInfo = KakaoService.getKakaoUserInfo(accessToken);
+	public String kakao(@RequestParam String code, HttpSession session) throws Exception {
+		String accessToken;
+        JSONObject jsonToken = kakaoService.getKakaoAccessToken(code);
+        accessToken = jsonToken.get("access_token").toString();
         
-        // Get id
-        String id = userInfo.path("id").asText();
-        String name = null;
-        //String email = null;
-        String userImg = null;
-        
-        // 유저정보 카카오에서 가져오기 Get properties
-        JsonNode properties = userInfo.path("properties");
-        //JsonNode kakao_account = userInfo.path("kakao_account");
-      
-        name = properties.path("nickname").asText();
-        //email = kakao_account.path("email").asText();
-        userImg = properties.path("thumbnail_image").asText();
-        
-        //System.out.println("id : " + id);
-        //System.out.println("name : " + name);
-        //System.out.println("email : " + email);
-        //System.out.println("userImg : " + userImg);
+        JSONObject userInfo = KakaoService.getKakaoUserInfo(accessToken);
+        JSONObject properties = (JSONObject) userInfo.get("properties");
+        //JSONObject kakao_account = (JSONObject) userInfo.get("kakao_account");
+        //유저 정보 가져오기
+        String id = userInfo.get("id").toString();
+        String name = properties.get("nickname").toString();
+        //String email = kakao_account.get("email").toString();
+        String userImg = properties.get("thumbnail_image").toString();
+        //세션 등록 추후 회원가입 활용
         session.setAttribute("sm_id", id);
         session.setAttribute("sm_name", name);
         session.setAttribute("userImg", userImg);
+        session.setAttribute("kakaoToken", accessToken);
         return "redirect:/home";
 	}
 	//로그 아웃
@@ -123,6 +116,10 @@ public class LoginController {
 				(String)request.getSession().getAttribute("sm_id"), 
 				target + "성공");
 		logService.insertLog(log);	
+		if(request.getSession().getAttribute("kakaoToken") != null) {
+			kakaoService.kakaoLogout(request.getSession().getAttribute("kakaoToken").toString());
+			request.getSession().removeAttribute("kakaoToken");
+		}		
 		if(request.getSession().getAttribute("sm_id") != null) {
 			request.getSession().removeAttribute("sm_id");
 		}

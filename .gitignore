@@ -152,4 +152,4 @@ $RECYCLE.BIN/
 
 Servers/
 target/
-SpringBoard/src/main/resources/mybatis/config/data-context.xml
+SpringBoard/src/main/resources/spring/data-context.xml
