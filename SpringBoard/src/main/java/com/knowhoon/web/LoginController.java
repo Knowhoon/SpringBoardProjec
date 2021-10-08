@@ -39,33 +39,40 @@ public class LoginController {
 	//로그인
 	@PostMapping("/login")
 	public String loginAction(LoginDTO loginDTO, HttpServletRequest request) {
-		LoginDTO result = loginService.loginAction(loginDTO);
-		System.out.println(request.getParameter("sm_id"));
-		System.out.println(request.getParameter("sm_pw"));
-		if(result != null) {
-			request.getSession().setAttribute("sm_id", result.getSm_id());
-			request.getSession().setAttribute("sm_name", result.getSm_name());
-			request.getSession().setAttribute("sm_grade", result.getSm_grade());
-			String target = "login";
-			LogDTO log = new LogDTO(
-					util.getIP(request), 
-					target , 
-					(String)request.getSession().getAttribute("sm_id"), 
-					target + "성공");
-			logService.insertLog(log);	
-			return "redirect:/home";			
-		} else {
-			if(request.getSession().getAttribute("sm_id") != null) {
-				request.getSession().removeAttribute("sm_id");				
+		String idCheck = checkID(request);
+		if(idCheck.equals("1")) {
+			//Salt값 가져오기
+			String getSalt = loginService.getSalt(loginDTO.getSm_id());
+			loginDTO.setSm_salt(getSalt);
+			LoginDTO result = loginService.loginAction(loginDTO);
+			
+			if(result != null) {
+				request.getSession().setAttribute("sm_id", result.getSm_id());
+				request.getSession().setAttribute("sm_name", result.getSm_name());
+				request.getSession().setAttribute("sm_grade", result.getSm_grade());
+				String target = "login";
+				LogDTO log = new LogDTO(
+						util.getIP(request), 
+						target , 
+						(String)request.getSession().getAttribute("sm_id"), 
+						target + "성공");
+				logService.insertLog(log);	
+				return "redirect:/home";			
+			} else {
+				if(request.getSession().getAttribute("sm_id") != null) {
+					request.getSession().removeAttribute("sm_id");				
+				}
+				if(request.getSession().getAttribute("sm_name") != null) {
+					request.getSession().removeAttribute("sm_name");							
+				}
+				if(request.getSession().getAttribute("sm_grade") != null) {
+					request.getSession().removeAttribute("sm_grade");							
+				}
+				return "redirect:/login?error=loginError";
 			}
-			if(request.getSession().getAttribute("sm_name") != null) {
-				request.getSession().removeAttribute("sm_name");							
-			}
-			if(request.getSession().getAttribute("sm_grade") != null) {
-				request.getSession().removeAttribute("sm_grade");							
-			}
-			return "redirect:/login?error=loginError";
-		}
+		}else {
+			return "redirect:/login?error=loginErrorId";
+		}	
 		
 	}
 	//카카오 로그인
@@ -142,7 +149,7 @@ public class LoginController {
 	@PostMapping("/join")
 	public String joinAction(HttpServletRequest request, LoginDTO loginDTO) {
 		int result = 0;
-		result = loginService.joinAction(loginDTO);
+		result = loginService.joinAction(loginDTO);		
 		if(result == 1) {
 			String target = "join";
 			LogDTO log = new LogDTO(

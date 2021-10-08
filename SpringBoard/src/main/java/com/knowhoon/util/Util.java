@@ -93,6 +93,7 @@ public class Util {
 	        }
 	        return buffer.toString();
 	}
+	
 	public String sendEmail(String authCode, String email, String subject, String content) {
 		String from = "knowhoon@gmail.com";
 		try {
@@ -108,5 +109,19 @@ public class Util {
 			e.printStackTrace();
 		}
 		return authCode;
+	}
+	public static String generateSalt() {
+		Random random = new Random();
+		
+		byte[] salt = new byte[8];
+		random.nextBytes(salt);
+		
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < salt.length; i++) {
+			// byte 값을 Hex 값으로 바꾸기.
+			sb.append(String.format("%02x",salt[i]));
+		}
+		
+		return sb.toString();
 	}
 }

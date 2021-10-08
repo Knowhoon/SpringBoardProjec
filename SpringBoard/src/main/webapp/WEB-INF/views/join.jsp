@@ -297,24 +297,25 @@ $(document).ready(function(){
 	var code = "";
 	$("#sendEmail").click(function(){
 		var sm_email = $("#sm_email").val();
-		$(".successSendChk").text("이메일 전송 중입니다. 잠시만 기다려주세요.");
+		$(".successSendChk").text("인증번호가 전송 되었습니다. 이메일을 확인해주세요.");
 		$(".successSendChk").css("color","green");
 		$("#sendEmail").attr("disabled",true);
+		$("#sm_email2").attr("disabled",false);
 		$.ajax({
 	        type:"POST",
 	        url:"emailConfirm?sm_email=" + sm_email,
 	        cache : false,
 	        success:function(data){
 	        	if(data == "error"){
-	        		alert("이메일 전송에 실패했습니다. 이메일 주소를 확인 또는 관리자에게 문의하세요.");
+	        		//alert("이메일 전송에 실패했습니다. 이메일 주소를 확인 또는 관리자에게 문의하세요.");
 					$("#sm_email").attr("autofocus",true);
 					$(".successEmailChk").text("이메일 전송에 실패했습니다. 이메일 주소를 확인 또는 관리자에게 문의하세요.");
 					$(".successEmailChk").css("color","red");
 					$("#emailChk").attr("disabled",false);
 					$("#sendEmail").attr("disabled",false);	
 	        	} else {
-					alert("인증번호 발송이 완료되었습니다.\n입력한 이메일에서 인증번호를 확인을 해주세요.");
-	        		$("#sm_email2").attr("disabled",false);
+					//alert("인증번호 발송이 완료되었습니다.\n입력한 이메일에서 인증번호를 확인을 해주세요.");
+	        		//$("#sm_email2").attr("disabled",false);
 	        		$("#emailChk2").css("display","inline-block");
 	        		$(".successEmailChk").text("인증번호를 입력 후 인증 버튼을 눌러주세요.");
 	        		$(".successEmailChk").css("color","green");

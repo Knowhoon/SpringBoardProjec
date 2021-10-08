@@ -23,5 +23,9 @@ public class LoginDAO {
 
 	public String checkEmail(String sm_email) {
 		return sqlSession.selectOne("login.checkEmail", sm_email);
+	}
+
+	public String getSalt(String sm_id) {
+		return sqlSession.selectOne("login.getSalt", sm_id);
 	}	
 }

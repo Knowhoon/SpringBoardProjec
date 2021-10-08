@@ -7,7 +7,8 @@ contact : knowhoon@gmail.com
 ***
  ## 기능 추가 보완 내역
   - 21.10.06 댓글 추천 기능 업데이트(댓글 중복 추천 방지 기능 포함)
-  - 21.10.06 카카오 API 관련 카카오 토큰값 로그아웃 기능 
+  - 21.10.06 카카오 API 관련 카카오 토큰값 로그아웃 기능
+  - 21.10.08 비밀번호 암호화시 salt 생성하여 회원가입 및 로그인 연동
 ***
 #### 1. 프로젝트소개
 - 1.1 프로젝트 목적
@@ -16,7 +17,7 @@ contact : knowhoon@gmail.com
 
 #### 2.프로젝트 구조 및 설정
 - 2.1 프로젝트 구조
-- 2.2 Spring 설정파일 구성 
+- 2.2 Spring 설정파일 구성
 
 #### 3. 화면별 주요기능
  - 3. 주요기능 소개
@@ -44,17 +45,17 @@ contact : knowhoon@gmail.com
 
  초기에는 기본적인 CRUD 기능(Create, Read, Update, Delete가 가능한 게시판을 작성하고자 하였습니다.
  게시판을 작성하며 아쉬운 부분이 계속 생기면서 그동안 인터넷 게시판, 카페등에서 접했던 기능들을 추가하게 되었습니다.
- 
+
  - 초기 기능
    - 게시물 작성, 게시물 조회, 게시물, 게시물 수정, 게시물 삭제, 게시글 댓글 작성, 게시글 댓글 수정, 게시글 댓글 삭제
-   
+
  -  추가 기능
    - 웹 페이 이용자 분리(관리자, 회원, 비회원) - 분류된 사용자들에게 제한된 기능 제공
      Admin(회원 관리, 로그 확인, 게시판 노출 여부 설정, 게시판 이름 수정, 게시판 추가)
    - 게시글 페이징 기능, 게시글 추천(좋아요, 싫어요) 기능, 주간 베스트 게시글, 게시판별 베스트 게시글, 댓글 추천, 로그 검색, 게시물 검색 기능(제목,내용,제목+내용)
    - 회원가입시 JavaSript 정규식및 ajax 활용 아이디, 이메일 중복체크, 이메일 인증 구현
    - 카카오 로그인 기능 구현
-   - 
+   -
 
 #### 2. 프로젝트 구조 및 설정(Spring Framework)
 
@@ -65,7 +66,7 @@ Database 구조(ERD)
 
  ![image](https://user-images.githubusercontent.com/73919581/134317539-68001a66-d518-422f-b7a3-1e123bd5c6f4.png)
  패키지 구조
- 
+
 #### 2.1 Spring MVC 처리과정
 
 - 2.2.1 클라이언트가 서버에 요청 -> 스프링에서 제공하는 DispatcherServlet이라는 Front-Controller가 요청을 가로챈다(web.xml)
@@ -93,7 +94,7 @@ Database 구조(ERD)
 	<welcome-file-list>
 		<wlecome-file>/</wlecome-file>
 	</welcome-file-list>
-	
+
 	<session-config>
 		<session.timeout>60</session.timeout>
 	</session-config>
@@ -103,7 +104,7 @@ Database 구조(ERD)
 		<param-name>contextConfigLocation</param-name>
 		<param-value>/WEB-INF/spring/root-context.xml</param-value>
 	</context-param>
-	
+
 	<!-- Creates the Spring Container shared by all Servlets and Filters -->
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
@@ -119,12 +120,12 @@ Database 구조(ERD)
 		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
-		
+
 	<servlet-mapping>
 		<servlet-name>appServlet</servlet-name>
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
-	
+
 	<filter>
 		<filter-name>encodingFilter</filter-name>
 		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
@@ -152,7 +153,7 @@ Database 구조(ERD)
 		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
 
 	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
-	
+
 	<!-- Enables the Spring MVC @Controller programming model -->
 	<annotation-driven />
 
@@ -167,12 +168,12 @@ Database 구조(ERD)
 		<beans:property name="prefix" value="/WEB-INF/views/" />
 		<beans:property name="suffix" value=".jsp" />
 	</beans:bean>
-	
+
 	<context:component-scan base-package="com.knowhoon.web" />
 	<context:component-scan base-package="com.knowhoon.util" />
-	
+
 	<beans:import resource="classpath:/spring/**/*-context.xml"/>
-	
+
 </beans:beans>
 ```
 
@@ -229,22 +230,22 @@ Database 구조(ERD)
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-	
+
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="username" value="ID"/>
 		<property name="password" value="PW"/>
 		<property name="url" value="jdbc:mariadb://localhost:8080/knowhoon"/>
 		<property name="driverClassName" value="org.mariadb.jdbc.Driver"/>
 	</bean>
-	
+
 	<!-- sqlSessionFactory -->
 	<bean id="sqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource"/>
 		<property name="mapperLocations" value="classpath:/mybatis/mappers/*Mapper.xml"/>
 		<property name="configLocation" value="classpath:/mybatis/config/mybatisConfig.xml"/>
-	
+
 	</bean>
-	
+
 	<!-- sqlSessionTemplate -->
 	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
 		<constructor-arg name="sqlSessionFactory" ref="sqlSessionFactoryBean"></constructor-arg>
@@ -258,7 +259,7 @@ Database 구조(ERD)
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-	
+
 	<bean class="org.springframework.web.multipart.commons.CommonsMultipartResolver" id="multipartResolver">
 		<property name="defaultEncoding" value="UTF-8"></property>
 		<!-- 파일 하나당 크기 50MB = 52428800byte -->
@@ -266,7 +267,7 @@ Database 구조(ERD)
 		<!-- 전체 파일 허용 : byte -->
 		<property name="maxUploadSize" value="104857600"></property>
 	</bean>
-	
+
 </beans>
 ```
 
@@ -349,12 +350,10 @@ Mybatis로 동적 SQL을 쉽게 작성하게 되어 불필요한 중복 코드�
 추천기능등 페이지 이동이 필요없는 기능을 Ajax를 이용하여 리팩토링 하여 댓글 작성, 수정, 삭제, 추천 등을 할 때 페이지가 다시 로딩되는 문제를 해결 예정입니다.
 
 ## 4.2 프로젝트 보완점
- 
- - 비밀번호 암호화시 salt 생성하여 회원가입 및 로그인 연동
+
+ - 댓글 추천 기능 ------21.10.06 완료
+ - 비밀번호 암호화시 salt 생성하여 회원가입 및 로그인 연동 ------21.10.08 완료
  - 보안 관련 라이브러리 추가하여 XSS취약점 보완
  - 실시간 쪽지 기능(Socket) - 댓글 알림 추천 알림 등
  - 회원 정보 조회 기능(작성 게시물 조회, 작성 댓글 조회)
  - Admin 전체 글 조회, 삭제 기능
-
-
-

@@ -2,7 +2,7 @@ package com.knowhoon.web.login;
 
 public class LoginDTO {
 	private int sm_no, sm_grade;
-	private String 	sm_name, sm_id, sm_pw, sm_joindate, sm_birthdate, sm_email;
+	private String 	sm_name, sm_id, sm_pw, sm_joindate, sm_birthdate, sm_email, sm_salt;
 	public int getSm_no() {
 		return sm_no;
 	}
@@ -50,6 +50,12 @@ public class LoginDTO {
 	}
 	public void setSm_pw(String sm_pw) {
 		this.sm_pw = sm_pw;
+	}
+	public String getSm_salt() {
+		return sm_salt;
+	}
+	public void setSm_salt(String sm_salt) {
+		this.sm_salt = sm_salt;
 	}
 	
 }
